@@ -4,16 +4,17 @@ import { LoginBtn, Password, PhoneNumber, Wrapper } from './style'
 import {LoadingOutlined} from "@ant-design/icons";
 import {notification} from "antd"
 import { LoginFn } from './login';
+import axios from 'axios';
  function Login() {
   const phoneNumberRef=useRef()
   const passwordRef=useRef()
   const [loading,setLoading]=useState(false)
 
   const onKeyDetect=(e)=>{
-
-    if(e.key==="Enter" || e.type==="click"){
-      onAuth()
-    }
+  if(loading)return // I used this to to the second task.Now during loading we cannot send request to log in
+    if(e.key==="Enter" || e.type==="click")onAuth()
+      
+    
       }
     const onAuth=async ()=>{
       setLoading(true)
@@ -30,31 +31,31 @@ import { LoginFn } from './login';
           })
           return
         }
-        await LoginFn(userValue,setLoading)
-        // try {
-        //   const response=await axios({
-        //     url:`${process.env.REACT_APP_MAIN_URL}/user/sign-in`,
-        //     method:"POST",
-        //     data:{
-        //       phoneNumber:`+998${userValue.phoneNumber}`,
-        //       password:userValue.password
-        //     }
-        //    })
-        //    notification.success({message:"Succesfully logged in"})
-        //    // ------- Now we got response from the API and we need to get the token and save it to local storage --------------
-        //    const token=response.data.data.token;
-        //    console.log(token)
-        //   localStorage.setItem("token",token);
-        //   setLoading(false)
+        try {
+          const {data}=await axios({
+            url:`${process.env.REACT_APP_MAIN_URL}/user/sign-in`,
+            method:"POST",
+            data:{
+              phoneNumber:`+998${userValue.phoneNumber}`,
+              password:userValue.password
+            }
+           })
+           notification.success({message:"Succesfully logged in"})
+           // ------- Now we got response from the API and we need to get the token and save it to local storage --------------
+           const token=data.data.token;
+           console.log(token)
+          localStorage.setItem("token",token);
+          setLoading(false)
 
-        // } catch (error) {
-        //   setLoading(false)
-        //   notification.error({
-        //     message:"User not found!!",
-        //     description:"the Phone number or the Password is wrong!",
-        //   })
+        } catch (error) {
+          console.log(error)
+          setLoading(false)
+          notification.error({
+            message:"User not found!!",
+            description:error.message,
+          })
         
-        // }
+        }
       
       
     }
@@ -65,7 +66,7 @@ import { LoginFn } from './login';
     <Wrapper.Description>Biz har kuni kechagidan ko'ra yaxshiroq xizmat ko'rsatishga intilamiz.</Wrapper.Description>
 <PhoneNumber ref={phoneNumberRef} name="phoneNumber"  addonBefore="+998" size="large" bordered={false} placeholder='Enter your number...'/>
 <Password onKeyDown={onKeyDetect} ref={passwordRef} name="password"   size="large"></Password>
-<LoginBtn onClick={onKeyDetect} type='primary'> {loading?<LoadingOutlined />:"Login"} </LoginBtn>
+<LoginBtn  onClick={onKeyDetect} type='primary'> {loading?<LoadingOutlined />:"Login"} </LoginBtn>
       </Wrapper.Container>
     </Wrapper>
   )
