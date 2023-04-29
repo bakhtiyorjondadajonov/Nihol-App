@@ -1,12 +1,14 @@
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import React from 'react'
-import Wrapper from './tools/wrappers';
-import Login from './components/Login';
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import React from "react";
+import Wrapper from "./tools/wrappers";
+import Login from "./components/Login";
+import Navbar from "./components/Navbar";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Wrapper>
-<Login/>
+    <Navbar />
+    {/* <Login/> */}
   </Wrapper>
 );
