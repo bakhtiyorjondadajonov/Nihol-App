@@ -3,9 +3,10 @@ import React, { useRef, useState } from 'react'
 import { LoginBtn, Password, PhoneNumber, Wrapper } from './style'
 import {LoadingOutlined} from "@ant-design/icons";
 import {notification} from "antd"
-import { LoginFn } from './login';
+import useNotificationAPI from '../../Generic/NotificationAPI';
 import axios from 'axios';
  function Login() {
+  const statusChecker=useNotificationAPI()
   const phoneNumberRef=useRef()
   const passwordRef=useRef()
   const [loading,setLoading]=useState(false)
@@ -24,11 +25,8 @@ import axios from 'axios';
         }
         if(!userValue.phoneNumber || !userValue.password){
           setLoading(false)
-          notification.error({
-            message:"the Phone number or the Password is missing",
-            description:"Please,fill in all blanks!"
-
-          })
+          statusChecker(400)
+         
           return
         }
         try {
@@ -43,17 +41,16 @@ import axios from 'axios';
            notification.success({message:"Succesfully logged in"})
            // ------- Now we got response from the API and we need to get the token and save it to local storage --------------
            const token=data.data.token;
-           console.log(token)
+         const userData=data.data.user;
+          
           localStorage.setItem("token",token);
+          localStorage.setItem("userData",JSON.stringify(userData));
+          
           setLoading(false)
 
         } catch (error) {
-          console.log(error)
           setLoading(false)
-          notification.error({
-            message:"User not found!!",
-            description:error.message,
-          })
+          statusChecker(error.response.status)
         
         }
       

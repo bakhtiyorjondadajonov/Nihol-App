@@ -1,7 +1,8 @@
+import { configureStore } from "@reduxjs/toolkit";
+import modalSlice from "./modalSlice";
 
-import {configureStore} from "@reduxjs/toolkit"
-
-const NiholStore= configureStore({
-    reducer:{}
-})
-export default NiholStore
+export default configureStore({
+  reducer: {
+    modal: modalSlice,
+  },
+});
