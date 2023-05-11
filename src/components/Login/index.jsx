@@ -1,16 +1,25 @@
 import React, { useRef, useState } from 'react'
 
-import { LoginBtn, Password, PhoneNumber, Wrapper } from './style'
+import { Wrapper,LoginBtn, Password, PhoneNumber } from './style'
 import {LoadingOutlined} from "@ant-design/icons";
 import {notification} from "antd"
 import useNotificationAPI from '../../Generic/NotificationAPI';
 import axios from 'axios';
+import useInputAPI from '../../Generic/InputAPI';
+import { useNavigate } from 'react-router-dom';
+import { useSignIn } from 'react-auth-kit';
  function Login() {
+  const navigate=useNavigate()
+  const signIn = useSignIn()
+  const [phoneNumber,setPhoneNumber]=useState("")
+  const {phoneNumberFormatter}=useInputAPI()
   const statusChecker=useNotificationAPI()
-  const phoneNumberRef=useRef()
   const passwordRef=useRef()
   const [loading,setLoading]=useState(false)
+const phoneInputHandler=(e)=>{
+setPhoneNumber(phoneNumberFormatter(e.target.value));
 
+}
   const onKeyDetect=(e)=>{
   if(loading)return // I used this to to the second task.Now during loading we cannot send request to log in
     if(e.key==="Enter" || e.type==="click")onAuth()
@@ -20,7 +29,7 @@ import axios from 'axios';
     const onAuth=async ()=>{
       setLoading(true)
         const userValue={
-            phoneNumber:`${phoneNumberRef.current.input.value}`,
+            phoneNumber:phoneNumber.replace(/[^\d]/g,""),
             password:passwordRef.current.input.value
         }
         if(!userValue.phoneNumber || !userValue.password){
@@ -40,14 +49,17 @@ import axios from 'axios';
            })
            notification.success({message:"Succesfully logged in"})
            // ------- Now we got response from the API and we need to get the token and save it to local storage --------------
-           const token=data.data.token;
-         const userData=data.data.user;
           
-          localStorage.setItem("token",token);
-          localStorage.setItem("userData",JSON.stringify(userData));
-          
+          localStorage.setItem("token", data.data.token)
           setLoading(false)
-
+         signIn(
+            {
+                token: data.data.token,
+                expiresIn:60,
+                tokenType: "Bearer",
+                authState: data.data.user,                 
+            })
+          navigate("/")
         } catch (error) {
           setLoading(false)
           statusChecker(error.response.status)
@@ -61,7 +73,7 @@ import axios from 'axios';
       <Wrapper.Container>
     <Wrapper.Title> Yana bir bor Salom👋</Wrapper.Title>
     <Wrapper.Description>Biz har kuni kechagidan ko'ra yaxshiroq xizmat ko'rsatishga intilamiz.</Wrapper.Description>
-<PhoneNumber ref={phoneNumberRef} name="phoneNumber"  addonBefore="+998" size="large" bordered={false} placeholder='Enter your number...'/>
+<PhoneNumber onChange={phoneInputHandler} value={phoneNumber}  name="phoneNumber"  addonBefore="+998" size="large" bordered={false} placeholder='Enter your number...'/>
 <Password onKeyDown={onKeyDetect} ref={passwordRef} name="password"   size="large"></Password>
 <LoginBtn  onClick={onKeyDetect} type='primary'> {loading?<LoadingOutlined />:"Login"} </LoginBtn>
       </Wrapper.Container>

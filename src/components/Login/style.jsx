@@ -4,6 +4,7 @@ import {Input,Button} from "antd"
 export const Wrapper=styled.div`
  width:100% ;
  height:100vh; 
+ background-color:#fff;
 `
 Wrapper.Container=styled.div`
    width :fit-content;
