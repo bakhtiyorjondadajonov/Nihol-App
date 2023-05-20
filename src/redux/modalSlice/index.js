@@ -5,12 +5,17 @@ const modalSlice = createSlice({
   //can I just call it as a state not InitialState
   initialState: {
     profileModalVisibility: false,
+    localeModalVisibility: false,
   },
   reducers: {
     switchProfileModalVisibility(state) {
       state.profileModalVisibility = !state.profileModalVisibility;
     },
+    switchLocaleModalVisibility(state) {
+      state.localeModalVisibility = !state.localeModalVisibility;
+    },
   },
 });
 export default modalSlice.reducer;
-export const { switchProfileModalVisibility } = modalSlice.actions;
+export const { switchProfileModalVisibility, switchLocaleModalVisibility } =
+  modalSlice.actions;

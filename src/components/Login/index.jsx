@@ -4,11 +4,13 @@ import { Wrapper,LoginBtn, Password, PhoneNumber } from './style'
 import {LoadingOutlined} from "@ant-design/icons";
 import {notification} from "antd"
 import useNotificationAPI from '../../Generic/NotificationAPI';
-import axios from 'axios';
+
 import useInputAPI from '../../Generic/InputAPI';
 import { useNavigate } from 'react-router-dom';
 import { useSignIn } from 'react-auth-kit';
+import useAxios from '../../hooks/useAxios';
  function Login() {
+  const axios=useAxios()
   const navigate=useNavigate()
   const signIn = useSignIn()
   const [phoneNumber,setPhoneNumber]=useState("")
@@ -39,14 +41,10 @@ setPhoneNumber(phoneNumberFormatter(e.target.value));
           return
         }
         try {
-          const {data}=await axios({
-            url:`${process.env.REACT_APP_MAIN_URL}/user/sign-in`,
-            method:"POST",
-            data:{
-              phoneNumber:`+998${userValue.phoneNumber}`,
-              password:userValue.password
-            }
-           })
+         const {data}= await axios({url:"/user/sign-in",method:"POST",body:{
+          phoneNumber:`+998${userValue.phoneNumber}`,
+          password:userValue.password
+        }})
            notification.success({message:"Succesfully logged in"})
            // ------- Now we got response from the API and we need to get the token and save it to local storage --------------
           
@@ -62,7 +60,7 @@ setPhoneNumber(phoneNumberFormatter(e.target.value));
           navigate("/")
         } catch (error) {
           setLoading(false)
-          statusChecker(error.response.status)
+          // statusChecker(error.response.status)
         
         }
       

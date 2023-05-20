@@ -7,22 +7,26 @@ import emptyPlaces from "../../assets/images/empty_place.svg"
 import report from "../../assets/images/report.svg"
 import { Wrapper } from './style'
 import { Title } from '../../Generic/Style/style'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 function Home() {
+  const navigate=useNavigate()
+  const {t}=useTranslation()
   return (
     <Wrapper>
-      <Title>Sections:</Title>
+      <Title>{t("home_page.section_title")}:</Title>
     <Wrapper.Container>
-     <Card title="All Users" image={allUsers}/>
-     <Card title="Half Time" image={halfTime}/>
+     <Card  onClick={()=>navigate("/all-users")} title={t("home_page.section_all_users")} image={allUsers}/>
+     <Card onClick={()=>navigate("/half-time")} title={t("home_page.section_half_time")} image={halfTime}/>
     </Wrapper.Container>
     <Wrapper.Container>
 
-     <Card title="Time Up" image={timeUp}/>
-     <Card title="Empty places" image={emptyPlaces}/>
+     <Card onClick={()=>navigate("/time-up")} title={t("home_page.section_time_up")} image={timeUp}/>
+     <Card onClick={()=>navigate("/empty-places")} title={t("home_page.section_empty_places")} image={emptyPlaces}/>
     </Wrapper.Container>
-    <Title>Reports:</Title>
+    <Title>{t("home_page.reports_title")}:</Title>
     <Wrapper.Container>
-     <Card title="Report" image={report}/>
+     <Card onClick={()=>navigate("/reports")} title={t("home_page.section_reports")} image={report}/>
     </Wrapper.Container>
     </Wrapper>
   )
