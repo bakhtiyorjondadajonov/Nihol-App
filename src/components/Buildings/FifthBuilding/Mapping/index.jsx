@@ -18,7 +18,7 @@ const StatusChecker=({isBooked,clienteID,userID})=>{
 }
 function Mapping() {
     const queryClient=useQueryClient();
-    const data=queryClient.getQueryData("accomodation/2");
+    const data=queryClient.getQueryData("accomodation/5");
    
   return (
     <MainRoomWrapper>

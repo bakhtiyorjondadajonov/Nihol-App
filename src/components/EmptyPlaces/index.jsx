@@ -17,7 +17,7 @@ const Types=()=>{
   <Title>{t("empty_places.section_title")}</Title>
 
   <Wrapper.Container>
-   <Card onClick={()=>navigateHandler("ordnary-rooms/2")} title={t("empty_places.ordnary_rooms")} image={OrdnaryRooms} />
+   <Card onClick={()=>navigateHandler("ordnary-rooms")} title={t("empty_places.ordnary_rooms")} image={OrdnaryRooms} />
    <Card onClick={()=>navigateHandler("luxary-rooms")} title={t("empty_places.luxary_rooms")} image={LuxaryRooms} />
   </Wrapper.Container>
   <Wrapper.Container>

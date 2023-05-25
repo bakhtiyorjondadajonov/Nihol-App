@@ -41,9 +41,15 @@ translation:uzKrill
 
       hasChild ? (
         <Route path={path} key={id} element={element}>
-{children.map(({path,id,element})=>(
-
-<Route path={path} key={id} element={element}/>
+{children.map(({path,id,element,hasChild,children})=>(
+  hasChild ? <Route path={path} key={id} element={element}>
+{
+  children.map(({path,id,element})=>(
+    
+<Route key={id} path={path} element={element}></Route>
+  ))
+}
+  </Route>:<Route path={path} key={id} element={element}/>
 
 ))}
 

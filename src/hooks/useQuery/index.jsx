@@ -6,7 +6,7 @@ export function useQueryHandler({queryKey,queryLink,method="GET",body}) {
 
  const axios=useAxios()
     return useQuery(queryKey,()=>{
-return axios({url:queryLink,method,body})
+return axios({url:queryLink,method,body}).then((res)=>res.data.data)
   },{refetchOnWindowFocus:false})
 }
 

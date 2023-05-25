@@ -7,7 +7,7 @@ import { useQuery } from 'react-query'
 import { useQueryHandler } from '../../../../hooks/useQuery'
 function OccupiedRoom({userID}) {
     
-    const {isLoading,data}=useQueryHandler({queryKey:`user/${userID}`,queryLink:`/accomodation/2/user?_id=${userID}`})
+    const {isLoading,data}=useQueryHandler({queryKey:`user/${userID}`,queryLink:`/accomodation/5/user?_id=${userID}`})
 
 
 
