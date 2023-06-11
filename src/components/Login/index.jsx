@@ -25,8 +25,6 @@ setPhoneNumber(phoneNumberFormatter(e.target.value));
   const onKeyDetect=(e)=>{
   if(loading)return // I used this to to the second task.Now during loading we cannot send request to log in
     if(e.key==="Enter" || e.type==="click")onAuth()
-      
-    
       }
     const onAuth=async ()=>{
       setLoading(true)

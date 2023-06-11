@@ -21,6 +21,7 @@ export const MainRoomWrapper=styled.div`
     -webkit-box-align: center;
     align-items: center;
     gap: 20px;
+    margin-bottom: 60px;
     border-radius: 12px;
     padding: 10px;
     background: rgb(255, 255, 255);
