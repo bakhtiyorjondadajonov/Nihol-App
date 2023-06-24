@@ -11,11 +11,45 @@ import {
   Switch,
   TreeSelect,
   message,
+  notification,
 } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { switchAddModalVisibility } from "../../../../../../redux/modalSlice";
+import { useAddUser } from "../../../../../../hooks/useQuery/useQueryActions";
 const { RangePicker } = DatePicker;
 function Vaucher() {
+  const { buildingMutation } = useSelector((state) => state.userData);
+  const { mutate } = useAddUser();
+  const dispatch = useDispatch();
+  const hideModal = () => {
+    dispatch(switchAddModalVisibility());
+  };
+  const submitHandler = (e) => {
+    const newUser = {
+      ...e,
+      birthDate: new Date(e.birthDate.$d).getTime(),
+      arrivalDate: new Date(e.rangePicker[0].$d).getTime(),
+      endDate: new Date(e.rangePicker[1].$d).getTime(),
+      clienteID: buildingMutation.clienteValue.clienteID,
+      hasVoucher: true,
+      roomID: buildingMutation.roomValue._id,
+      roomNumber: buildingMutation.roomValue.roomNumber,
+      buildingNumber: buildingMutation.buildingNumber,
+    };
+    delete newUser.rangePicker;
+    mutate({ body: newUser });
+    notification.success({
+      message: "Succesfully added",
+    });
+    hideModal();
+  };
   return (
     <Form
+      initialValues={{
+        roomNumber: buildingMutation.roomValue.roomNumber,
+        buildingNumber: buildingMutation.buildingNumber,
+      }}
+      onFinish={submitHandler}
       size="small"
       labelCol={{
         span: 15,
@@ -54,7 +88,7 @@ function Vaucher() {
         <Input />
       </Form.Item>
       <Form.Item
-        name="passportNumber"
+        name="passportID"
         rules={[
           {
             required: true,
@@ -66,7 +100,7 @@ function Vaucher() {
         <Input />
       </Form.Item>
       <Form.Item
-        name="birthdate"
+        name="birthDate"
         rules={[
           {
             required: true,
@@ -90,7 +124,7 @@ function Vaucher() {
         <Input addonBefore="+998" />
       </Form.Item>
       <Form.Item
-        name="dailyPrice"
+        name="dayCost"
         rules={[
           {
             required: true,
@@ -150,7 +184,7 @@ function Vaucher() {
         <Input />
       </Form.Item>
       <Form.Item
-        name="organization"
+        name="vaucherOrganization"
         rules={[
           {
             required: true,
@@ -171,7 +205,7 @@ function Vaucher() {
         ]}
         label="Building Number"
       >
-        <Input />
+        <Input disabled />
       </Form.Item>
       <Form.Item
         name="roomNumber"
@@ -183,8 +217,16 @@ function Vaucher() {
         ]}
         label="Room Number"
       >
-        <Input />
+        <Input disabled />
       </Form.Item>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+        <Button onClick={hideModal} type="default">
+          Cancel
+        </Button>
+        <Button htmlType="submit" type="primary">
+          Add
+        </Button>
+      </div>
     </Form>
   );
 }

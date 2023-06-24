@@ -1,15 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "./style";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import EmptyUI from "../../Booking/EmptyUI";
 import { useQueryClient } from "react-query";
 import { Button } from "antd";
+import { useDeleteUser } from "../../../../../hooks/useQuery/useQueryActions";
 
 function Observing() {
+  const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useDeleteUser();
   const queryClient = useQueryClient();
   const { selectedUser, isRoomBooked } = useSelector((state) => state.userData);
   const userData = queryClient.getQueryData(`user/${selectedUser._id}`);
+  console.log(userData);
+  const deleteUserHandler = () => {
+    console.log("Bismillah");
+    mutate({
+      body: {
+        roomNumber: userData.roomNumber,
+        clienteID: userData.clienteID,
+        _id: userData._id,
+      },
+    });
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 3000);
+  };
   return !isRoomBooked ? (
     <Wrapper>
       <Wrapper.InfoWrap>
@@ -62,7 +78,9 @@ function Observing() {
       </Wrapper.InfoWrap>
       <Wrapper.InfoWrap>
         <Wrapper.InfoWrap.Key>Vaucher Status</Wrapper.InfoWrap.Key>
-        <Wrapper.InfoWrap.Value>Without vaucher</Wrapper.InfoWrap.Value>
+        <Wrapper.InfoWrap.Value>
+          {userData?.hasVoucher ? "With vaucher" : "Without vaucher"}
+        </Wrapper.InfoWrap.Value>
       </Wrapper.InfoWrap>
       <Wrapper.InfoWrap>
         <Wrapper.InfoWrap.Key>Payment by Cash</Wrapper.InfoWrap.Key>
@@ -89,9 +107,18 @@ function Observing() {
         <Wrapper.InfoWrap.Value>{userData?.roomNumber}</Wrapper.InfoWrap.Value>
       </Wrapper.InfoWrap>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-        <Button type="default">Cancel</Button>
-        <Button type="primary">Move</Button>
-        <Button danger type="primary">
+        <Button disabled={isLoading} type="default">
+          Cancel
+        </Button>
+        <Button disabled={isLoading} type="primary">
+          Move
+        </Button>
+        <Button
+          disabled={isLoading}
+          onClick={deleteUserHandler}
+          danger
+          type="primary"
+        >
           Delete
         </Button>
       </div>

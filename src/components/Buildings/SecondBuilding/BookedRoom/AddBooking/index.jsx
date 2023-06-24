@@ -18,18 +18,39 @@ import {
 const { RangePicker } = DatePicker;
 
 function AddBooking() {
+  const { buildingMutation } = useSelector((state) => state.userData);
   const dispatch = useDispatch();
   const hideModal = () => {
     dispatch(switchAddBookingModalVisibility());
   };
   const { addBookingModalVisibility } = useSelector((state) => state.modal);
+  const submitHandeler = (e) => {
+    const bookedUser = {
+      ...e,
+      birthDate: new Date(e.birthDate.$d).getTime(),
+      arrivalDate: new Date(e.rangePicker[0].$d).getTime(),
+      endDate: new Date(e.rangePicker[1].$d).getTime(),
+      clienteID: buildingMutation?.clienteValue?.clienteID,
+      roomID: buildingMutation?.roomValue?._id,
+      roomNumber: buildingMutation?.roomValue?.roomNumber,
+      buildingNumber: buildingMutation?.buildingNumber,
+    };
+    delete bookedUser.rangePicker;
+    console.log(bookedUser);
+  };
   return (
     <Modal
+      footer={null}
       title="Add Booking"
       onCancel={hideModal}
       open={addBookingModalVisibility}
     >
       <Form
+        onFinish={submitHandeler}
+        initialValues={{
+          roomNumber: buildingMutation?.roomValue?.roomNumber,
+          buildingNumber: buildingMutation?.buildingNumber,
+        }}
         size="small"
         labelCol={{
           span: 15,
@@ -80,7 +101,7 @@ function AddBooking() {
           <Input />
         </Form.Item>
         <Form.Item
-          name="birthdate"
+          name="birthDate"
           rules={[
             {
               required: true,
@@ -138,7 +159,7 @@ function AddBooking() {
           ]}
           label="Building Number"
         >
-          <Input />
+          <Input disabled />
         </Form.Item>
         <Form.Item
           name="roomNumber"
@@ -150,8 +171,18 @@ function AddBooking() {
           ]}
           label="Room Number"
         >
-          <Input />
+          <Input disabled />
         </Form.Item>
+        <div
+          style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
+        >
+          <Button onClick={hideModal} type="default">
+            Cancel
+          </Button>
+          <Button htmlType="submit" type="primary">
+            Book
+          </Button>
+        </div>
       </Form>
     </Modal>
   );

@@ -5,6 +5,7 @@ const userSlice = createSlice({
   initialState: {
     selectedUser: {},
     isRoomBooked: false,
+    buildingMutation: {},
   },
   reducers: {
     getUserData(state, { payload }) {
@@ -13,7 +14,11 @@ const userSlice = createSlice({
     setIsRoomBooked(state, { payload }) {
       state.isRoomBooked = payload;
     },
+    setBuildingMutation(state, { payload }) {
+      state.buildingMutation = payload;
+    },
   },
 });
-export const { getUserData, setIsRoomBooked } = userSlice.actions;
+export const { getUserData, setIsRoomBooked, setBuildingMutation } =
+  userSlice.actions;
 export default userSlice.reducer;

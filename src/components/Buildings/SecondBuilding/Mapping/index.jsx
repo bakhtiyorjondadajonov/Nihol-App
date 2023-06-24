@@ -16,13 +16,33 @@ import UserModal from "../../Common/UserModal";
 import AddModal from "../EmptyRoom/Add";
 import AddBooking from "../BookedRoom/AddBooking";
 
-const StatusChecker = ({ isBooked, clienteID, userID }) => {
-  if (isBooked) {
-    return <BookedRoom isBooked={isBooked} key={clienteID} />;
-  } else if (userID) {
-    return <OccupiedRoom key={clienteID + 1234} userID={userID} />;
+const StatusChecker = (clienteValue, roomValue) => {
+  if (clienteValue.userID || (clienteValue.userID && clienteValue.isBooked)) {
+    return (
+      <OccupiedRoom
+        key={clienteValue.clienteID + 1234}
+        userID={clienteValue.userID}
+        clienteValue={clienteValue}
+        roomValue={roomValue}
+      />
+    );
+  } else if (clienteValue.isBooked) {
+    return (
+      <BookedRoom
+        isBooked={clienteValue.isBooked}
+        clienteValue={clienteValue}
+        key={clienteValue.clienteID}
+        roomValue={roomValue}
+      />
+    );
   } else {
-    return <EmptyRoom key={clienteID + 5} />;
+    return (
+      <EmptyRoom
+        roomValue={roomValue}
+        clienteValue={clienteValue}
+        key={clienteValue.clienteID + 5}
+      />
+    );
   }
 };
 function Mapping() {
@@ -35,13 +55,13 @@ function Mapping() {
       <AddModal />
       <UserModal content="Hiii" />
       <RoomsContainer>
-        {data.map(({ _id, roomNumber, cliente }) => (
-          <RoomWrapper key={_id}>
-            <RoomTitle>Room {roomNumber}</RoomTitle>
+        {data.map((roomValue) => (
+          <RoomWrapper key={roomValue._id}>
+            <RoomTitle>Room {roomValue.roomNumber}</RoomTitle>
 
             <RoomContainer>
-              {cliente?.map(({ clienteID, isBooked, userID }) =>
-                StatusChecker({ clienteID, isBooked, userID })
+              {roomValue.cliente?.map((clienteValue) =>
+                StatusChecker(clienteValue, roomValue)
               )}
             </RoomContainer>
           </RoomWrapper>

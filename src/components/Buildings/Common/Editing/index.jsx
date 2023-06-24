@@ -40,6 +40,7 @@ function Editing() {
       passportID: e?.passportID,
       birthDate: new Date(e.birthDate).getTime(),
       dayCost: 100,
+
       rangePicker: [dayjs(e.arrivalDate), dayjs(e.endDate)],
       paidByCash: e?.paidByCash,
       paidByPlasticCard: e?.paidByPlasticCard,

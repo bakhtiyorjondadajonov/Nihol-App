@@ -1,21 +1,46 @@
-import React from "react";
-import {
-  Button,
-  Cascader,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Switch,
-  TreeSelect,
-  message,
-} from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, DatePicker, Form, Input, notification } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { switchAddModalVisibility } from "../../../../../../redux/modalSlice";
+import { useAddUser } from "../../../../../../hooks/useQuery/useQueryActions";
 const { RangePicker } = DatePicker;
 function Ordnary() {
+  const { mutate } = useAddUser();
+  const { buildingMutation } = useSelector((state) => state.userData);
+
+  const dispatch = useDispatch();
+  const hideModal = () => {
+    dispatch(switchAddModalVisibility());
+  };
+
+  const submitHandler = (e) => {
+    const shouldAddData = {
+      ...e,
+      birthDate: new Date(e.birthDate.$d).getTime(),
+      arrivalDate: new Date(e.rangePicker[0].$d).getTime(),
+      endDate: new Date(e.rangePicker[1].$d).getTime(),
+      clienteID: buildingMutation.clienteValue.clienteID,
+      hasVaucher: false,
+      roomID: buildingMutation.roomValue._id,
+      roomNumber: buildingMutation.roomValue.roomNumber,
+      buildingNumber: buildingMutation.buildingNumber,
+    };
+    delete shouldAddData.rangePicker;
+
+    mutate({ body: shouldAddData });
+    notification.success({
+      message: "Succesfully added",
+    });
+    hideModal();
+  };
+
   return (
     <Form
+      initialValues={{
+        roomNumber: buildingMutation.roomValue.roomNumber,
+        buildingNumber: buildingMutation.buildingNumber,
+      }}
+      onFinish={submitHandler}
       size="small"
       labelCol={{
         span: 15,
@@ -54,7 +79,7 @@ function Ordnary() {
         <Input />
       </Form.Item>
       <Form.Item
-        name="passportNumber"
+        name="passportID"
         rules={[
           {
             required: true,
@@ -66,7 +91,7 @@ function Ordnary() {
         <Input />
       </Form.Item>
       <Form.Item
-        name="birthdate"
+        name="birthDate"
         rules={[
           {
             required: true,
@@ -90,7 +115,7 @@ function Ordnary() {
         <Input addonBefore="+998" />
       </Form.Item>
       <Form.Item
-        name="dailyPrice"
+        name="dayCost"
         rules={[
           {
             required: true,
@@ -123,7 +148,7 @@ function Ordnary() {
         ]}
         label="Building Number"
       >
-        <Input />
+        <Input disabled />
       </Form.Item>
       <Form.Item
         name="roomNumber"
@@ -135,8 +160,16 @@ function Ordnary() {
         ]}
         label="Room Number"
       >
-        <Input />
+        <Input disabled />
       </Form.Item>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+        <Button onClick={hideModal} type="default">
+          Cancel
+        </Button>
+        <Button htmlType="submit" type="primary">
+          Add
+        </Button>
+      </div>
     </Form>
   );
 }

@@ -1,13 +1,7 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import useAxios from "../../useAxios";
-// const useUpdateUserFromCashe = () => {
-//   const queryClient = useQueryClient();
-//   return ({ id, shouldUpdateData }) => {
-//     queryClient.setQueryData(`user/${id}`, (oldQueryData) => {
-//       return shouldUpdateData;
-//     });
-//   };
-// };
+import { useDispatch, useSelector } from "react-redux";
+import { switchUserModalVisibility } from "../../../redux/modalSlice";
 
 const useUpdateQueryData = () => {
   // we need to create query client here
@@ -31,5 +25,108 @@ const useUpdateUser = () => {
     });
   });
 };
+const useAddUserToQueryData = () => {
+  const queryClient = useQueryClient();
 
-export { useUpdateUser };
+  return ({ userData }) => {
+    queryClient.setQueryData(
+      `accomodation/${userData.buildingNumber}`,
+      (oldQueryData) => {
+        return oldQueryData.map((value) => {
+          return value.roomNumber == userData.roomNumber
+            ? {
+                ...value,
+
+                cliente: value.cliente.map((value) => {
+                  return value.clienteID == userData.clienteID
+                    ? {
+                        ...value,
+                        userID: userData._id,
+                      }
+                    : value;
+                }),
+              }
+            : value;
+        });
+      }
+    );
+  };
+};
+const useAddUser = () => {
+  const axios = useAxios();
+  const addUserToQuery = useAddUserToQueryData();
+  return useMutation(({ body }) => {
+    return axios({
+      url: `/accomodation/${body.buildingNumber}/create-user`,
+      method: "POST",
+      body,
+    }).then((res) => {
+      addUserToQuery({ userData: res.data.data });
+    });
+  });
+};
+/////////////
+const useAddBookedUserToQueryData = () => {
+  const queryClient = useQueryClient();
+
+  return ({ body }) => {
+    queryClient.setQueryData();
+  };
+};
+const useAddBookedUser = () => {
+  const axios = useAxios();
+
+  return useMutation(({ body }) => {
+    return axios({
+      url: `/accomodation/${body.buildingNumber}/create-booked-user`,
+      method: "POST",
+      body,
+    });
+  });
+};
+export { useUpdateUser, useAddUser };
+
+const useDeleteUserFromQuery = () => {
+  const queryClient = useQueryClient();
+
+  return ({ userData }) => {
+    queryClient.setQueryData(`accomodation/2`, (oldQueryData) => {
+      return oldQueryData.map((value) => {
+        return value.roomNumber == userData.roomNumber
+          ? {
+              ...value,
+
+              cliente: value.cliente.map((value) => {
+                return value.clienteID == userData.clienteID
+                  ? {
+                      ...value,
+                      userID: "",
+                    }
+                  : value;
+              }),
+            }
+          : value;
+      });
+    });
+  };
+};
+export const useDeleteUser = () => {
+  const dispatch = useDispatch();
+  const hideModal = () => {
+    dispatch(switchUserModalVisibility());
+  };
+  const deleteFromQuery = useDeleteUserFromQuery();
+  const axios = useAxios();
+  return useMutation(({ body }) => {
+    return axios({
+      url: `/accomodation/2/delete-user`,
+      method: "DELETE",
+      body,
+    }).then((res) => {
+      console.log(res);
+      deleteFromQuery({ userData: body });
+      console.log("Deleted Successfully");
+      hideModal();
+    });
+  });
+};
